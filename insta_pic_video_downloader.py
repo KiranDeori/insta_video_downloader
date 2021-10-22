@@ -1,12 +1,17 @@
-import pip
 from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
-import webbrowser
-
-
+import os
+import uuid
+import wget
 
 def get_url(url , option):
+    """
+    This function will get the url from user
+    an according to the option given by the user 
+    it will return the downlodable link for that image or video
+    """
+
     chrome_options = Options()
     chrome_options.headless = True
     user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
@@ -28,11 +33,36 @@ def get_url(url , option):
         return None
 
 
-# url = 'https://www.instagram.com/p/CRY9PR7nBDo/?utm_source=ig_web_copy_link'
+def save_download(url_download , option):
+    """
+    This function will download the image
+    and save it to the image folder of the current directory
+    """
+    # getting the current directory path
+    path = os.getcwd()
+    path_image = os.path.join(path , "images")
+    path_video = os.path.join(path , "videos")
+    
+    # make a unique code for images
+    unique_id = uuid.uuid4()
+
+    # saving images to folders
+    if option == 0:
+        save_as_image = os.path.join(path_image , f'image_{unique_id}.jpg')
+        wget.download(url_download , save_as_image)
+    elif option == 1:
+        save_as_video = os.path.join(path_video , f'video_{unique_id}.mp4')
+        wget.download(url_download , save_as_video)
+    else:
+        raise ValueError('link is not valid')
+        
+
+
+
 
 url = input('Enter Your Url :')
 while True:
-    option = int(input('Image [0]\nVideo [1] : '))
+    option = int(input('Image [0] Video [1] : '))
     if (option == 1 or option == 0):
         break
     else:
@@ -40,4 +70,4 @@ while True:
  
 
 object_url = get_url(url , option)
-webbrowser.open(object_url , new=0 , autoraise=True)
+save_download(object_url , option)
